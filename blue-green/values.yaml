@@ -10,7 +10,7 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: "maru-blue-green"
+fullnameOverride: "maru-blue-green-new-one"
 
 serviceAccount:
   # Specifies whether a service account should be created
