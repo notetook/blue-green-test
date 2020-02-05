@@ -1,10 +1,11 @@
+pipelineVersion: v0
+
 replicaCount: 1
 
 image:
   repository: notetake/echo-server
+  tag: latest
   pullPolicy: Always
-
-nameOverride: ""
 
 service:
   type: ClusterIP
