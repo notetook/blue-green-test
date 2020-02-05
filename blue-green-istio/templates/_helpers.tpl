@@ -3,7 +3,7 @@
 Expand the name of the chart.
 */}}
 {{- define "blue-green-istio.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
