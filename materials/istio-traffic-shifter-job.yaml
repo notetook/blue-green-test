@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: istio-traffic-shift
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: istio-traffic-shift
+rules:
+- apiGroups: ["networking.istio.io"]
+  resources: ["virtualservices"]
+  verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: istio-traffic-shift
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: istio-traffic-shift
+subjects:
+  - kind: ServiceAccount
+    name: istio-traffic-shift
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: istio-traffic-shift
+spec:
+  template:
+    spec:
+      serviceAccountName: istio-traffic-shift
+      containers:
+      - name: istio-traffic-shift
+        image: quay.io/devsisters/istio-traffic-shifter
+        command:
+        - "/bin/ash"
+        - "-ecx"
+        - "/istio-traffic-shifter -virtualService blue-green -greenService blue-green2 -blueService blue-green -percentage 50"
+      restartPolicy: Never

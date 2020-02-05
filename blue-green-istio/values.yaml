@@ -1,0 +1,5 @@
+nameOverride: ""
+
+virtualService:
+  hosts: maru-blue-green.bobcat.devsisters.cloud
+  

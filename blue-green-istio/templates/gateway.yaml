@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: {{ include "blue-green.fullname" . }}
+  name: {{ include "blue-green-istio.name" . }}
 spec:
   selector:
     istio: ingressgateway
