@@ -3,7 +3,7 @@
 Expand the name of the chart.
 */}}
 {{- define "blue-green.name" -}}
-{{- printf "%s-%s" .Chart.Name .Values.pipelineVersion | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" .Chart.Name .Values.spinnaker.executionId | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*

@@ -1,4 +1,5 @@
-pipelineVersion: v0
+spinnaker:
+  executionId: 00000000000000000000000000
 
 replicaCount: 1
 
