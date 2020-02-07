@@ -1,16 +1,26 @@
+# istio-traffic-shifter를 spinnaker에서 사용할 수 있도록 해주는 yaml 파일
+#
+# Prerequisite variable:
+#   virtualServiceName     : virtual service의 이름
+#   targetServiceName      : traffic을 shift 하고 싶은 service 이름
+#   targetWeightPercentage : traffic을 shift 하고 싶은 정도 (%)
+#
+# Prerequisite cleanup:
+#   job.metadata.name: istio-traffic-shifter
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: istio-traffic-shift
-label:
-  app: istio-traffic-shift 
+  name: istio-traffic-shifter
+  labels:
+    app: istio-traffic-shifter
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: istio-traffic-shift
-label:
-  app: istio-traffic-shift
+  name: istio-traffic-shifter
+  labels:
+    app: istio-traffic-shifter
 rules:
 - apiGroups: ["networking.istio.io"]
   resources: ["virtualservices"]
@@ -19,34 +29,36 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: istio-traffic-shift
-label:
-  app: istio-traffic-shift
+  name: istio-traffic-shifter
+  labels:
+    app: istio-traffic-shifter
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: istio-traffic-shift
+  name: istio-traffic-shifter
 subjects:
   - kind: ServiceAccount
-    name: istio-traffic-shift
+    name: istio-traffic-shifter
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: istio-traffic-shift
+  name: istio-traffic-shifter
+  labels:
+    app: istio-traffic-shifter
 spec:
   template:
     spec:
-      serviceAccountName: istio-traffic-shift
+      serviceAccountName: istio-traffic-shifter
       containers:
-      - name: istio-traffic-shift
+      - name: istio-traffic-shifter
         image: quay.io/devsisters/istio-traffic-shifter
         command:
         - "/bin/ash"
         - "-ecx"
         - "/istio-traffic-shifter \
-          -virtualService blue-green \
-          -greenService blue-green-${ parameters.greenPipelineVersion } \
-          -blueService blue-green${ parameters.bluePipelineVersion } \
-          -percentage 100"
+          -virtualService ${ virtualServiceName } \
+          -targetService ${ targetServiceName } \
+          -percentage ${ targetWeightPercentage }"
       restartPolicy: Never
+  ttlSecondsAfterFinished: 0
