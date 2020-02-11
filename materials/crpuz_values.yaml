@@ -1,0 +1,80 @@
+common:
+  gameCode: crpuz
+  env: stg
+  serverFarmName: red
+
+  authServerURL: 'https://account-server.stg.devsisters.cloud'
+  billingServerURL: 'https://billing-server.stg.devsisters.cloud'
+  friendServerURL: 'https://friend-server.stg.devsisters.cloud'
+  ingameServerURL: 'https://ingame-server.stg.devsisters.cloud'
+  pushServerURL: 'https://push-server.stg.devsisters.cloud'
+  wordFilterURL: 'https://wordfilter.devsisters.cloud'
+
+  jwtAudience: crpuz
+  jwtIssuer: ovencloud
+
+  clusterName: alpaca
+
+  createdTimestamp: '1970-01-01T00-00:00Z'
+
+# Image
+game:
+  tracing:
+    jaegerEnabled: true
+    jaegerHost: jaeger-allinone-agent.jaeger.svc
+    jaegerPort: 6831
+  javaOpts: '-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=75.0 -XX:+PreserveFramePointer
+  -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9900 -Dcom.sun.management.jmxremote.ssl=false
+  -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=127.0.0.1
+  -Dcom.sun.management.jmxremote.rmi.port=9901 -Dopentracing.jaeger.enable-b3-propagation=true'
+  readinessProbe:
+    enabled: false
+    initialDelay: 60
+    successThreshold: 5
+    failureThreshold: 3
+  livenessProbe:
+    enabled: true
+    initialDelay: 60
+    successThreshold: 5
+    failureThreshold: 3
+  hpa:
+    enabled: false
+    memoryEnabled: false
+  limits:
+    memory: 4Gi
+  requests:
+    memory: 2Gi
+    cpu: 1200m
+  image: '425927401566.dkr.ecr.ap-northeast-1.amazonaws.com/crpuz-game:0.2.0-17'
+  replicas: 2
+  terminationGracePeriodSeconds: 30
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
+  canary:
+    enabled: false
+    javaOpts: '-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=75.0
+        -XX:+PreserveFramePointer -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9900
+        -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=true
+        -Djava.rmi.server.hostname=jmx.crpuz-stg.alpaca.devsisters.cloud -Dcom.sun.management.jmxremote.rmi.port=9901
+        -Dcom.sun.management.jmxremote.access.file=/mnt/jmxremote.access
+        -Dcom.sun.management.jmxremote.password.file=/mnt/jmxremote.password -Dopentracing.jaeger.enable-b3-propagation=true'
+
+optool:
+  image: '425927401566.dkr.ecr.ap-northeast-1.amazonaws.com/crpuz-optool:0.2.0-9'
+  replicas: 1
+  ingress:
+    host: optool.crpuz-stg.alpaca.devsisters.cloud
+
+# DB
+mysql:
+  host: 'crpuz-stg-aurora-cluster.cluster-cgemitzzndgn.ap-northeast-1.rds.amazonaws.com'
+  port: 3306
+  username: root
+
+couchbase:
+  userId: crpuz-puzzle
+  host: couchbase
+  port: 8091
+  port_query: 8092
+  port_data: 11210
