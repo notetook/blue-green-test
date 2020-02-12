@@ -46,6 +46,8 @@ metadata:
   name: istio-traffic-shifter
   labels:
     app: istio-traffic-shifter
+  annotations:
+    sidecar.istio.io/inject: "false"
 spec:
   template:
     spec:
